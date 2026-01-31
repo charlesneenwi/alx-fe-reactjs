@@ -46,7 +46,7 @@ function Search() {
       <div className="results">
         {loading && <p>Loading...</p>}
 
-        {error && <p style={{ color: "red" }}>Looks like we can't find the user</p>}
+        {error && <p style={{ color: "red" }}>Looks like we cant find the user</p>}
 
         {user && (
           <div className="user-card">

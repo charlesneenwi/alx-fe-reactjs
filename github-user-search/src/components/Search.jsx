@@ -3,68 +3,77 @@ import { fetchUserData } from "../services/githubService";
 
 function Search() {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
+  const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
+  const [results, setResults] = useState([]); // Initialized as empty array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!username.trim()) return;
-
     setLoading(true);
     setError(false);
-    setUser(null);
 
     try {
-      const data = await fetchUserData(username);
-      setUser(data);
-    } catch (err) {
+      const data = await fetchUserData(username, location, minRepos);
       
+      // IMPORTANT: GitHub Search API returns { items: [], total_count: 0 }
+      // We must set results to the 'items' array.
+      setResults(data.items || []); 
+    } catch (err) {
       setError(true);
+      setResults([]); // Reset to empty array so .map() doesn't break
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="search-container">
-    
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter GitHub username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+    <div className="p-8">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg mx-auto bg-gray-100 p-6 rounded-lg">
+        <input 
+          type="text" 
+          placeholder="User Name" 
+          className="border p-2 rounded"
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)} 
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Searching..." : "Search"}
+        <input 
+          type="text" 
+          placeholder="Location" 
+          className="border p-2 rounded"
+          value={location} 
+          onChange={(e) => setLocation(e.target.value)} 
+        />
+        <input 
+          type="number" 
+          placeholder="Min Repos" 
+          className="border p-2 rounded"
+          value={minRepos} 
+          onChange={(e) => setMinRepos(e.target.value)} 
+        />
+        <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+          Search
         </button>
       </form>
 
-     
-      <div className="results">
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
         {loading && <p>Loading...</p>}
-
-        {error && <p style={{ color: "red" }}>Looks like we cant find the user</p>}
-
-        {user && (
-          <div className="user-card">
-            <img
-              src={user.avatar_url}
-              alt={user.login}
-              width="100"
-              style={{ borderRadius: "50%" }}
-            />
-            <h2>{user.name || user.login}</h2>
-            <p>{user.bio || "No bio available for this user."}</p>
-            <p><strong>Location:</strong> {user.location || "Not specified"}</p>
-            <p><strong>Public Repos:</strong> {user.public_repos}</p>
-            
-            <a href={user.html_url} target="_blank" rel="noreferrer">
-              View GitHub Profile
+        {error && <p className="text-red-500">Error fetching data.</p>}
+        
+        {/* The Safety Check: results is an array now */}
+        {results.length > 0 && results.map((user) => (
+          <div key={user.id} className="border p-4 rounded shadow-sm text-center">
+            <img src={user.avatar_url} alt={user.login} className="w-20 h-20 rounded-full mx-auto" />
+            <h3 className="font-bold mt-2">{user.login}</h3>
+            <a href={user.html_url} target="_blank" rel="noreferrer" className="text-blue-500 block mt-2">
+              View Profile
             </a>
           </div>
+        ))}
+
+        {!loading && !error && results.length === 0 && (
+            <p className="col-span-full text-center text-gray-500">No users found. Try adjusting your filters.</p>
         )}
       </div>
     </div>

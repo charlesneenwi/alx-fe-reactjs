@@ -9,10 +9,9 @@ function AddRecipeForm() {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -20,6 +19,7 @@ function AddRecipeForm() {
     e.preventDefault();
     console.log(formData);
 
+    // Reset form
     setFormData({ title: "", ingredients: "", instructions: "" });
   };
 

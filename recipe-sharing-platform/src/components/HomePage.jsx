@@ -6,7 +6,6 @@ const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    
     setRecipes(recipesData);
   }, []);
 
@@ -18,6 +17,15 @@ const HomePage = () => {
         <p className="text-gray-600 text-lg">
           Discover delicious recipes for every occasion
         </p>
+        
+        {/* Add Recipe Button */}
+        <div className="mt-6">
+          <Link to="/add-recipe">
+            <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transform transition-all duration-300 hover:scale-105">
+              + Add New Recipe
+            </button>
+          </Link>
+        </div>
       </header>
 
       
@@ -46,8 +54,8 @@ const HomePage = () => {
 
            
             <div className="p-4 border-t border-gray-100 flex justify-end">
-              <span className="text-orange-600 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300">More Details 
-                →
+              <span className="text-orange-600 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300">
+                More Details →
               </span>
             </div>
           </Link>

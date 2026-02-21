@@ -5,9 +5,10 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import BlogPost from "./components/BlogPost";
 import ProtectedRoute from "./components/ProtectedRoute";
+import useAuth from "./hooks/useAuth";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <BrowserRouter>
@@ -16,16 +17,16 @@ function App() {
         <Link to="/profile">Profile</Link> |{" "}
         <Link to="/blog/1">Blog Post 1</Link> |{" "}
         <Link to="/login">Login</Link> |{" "}
-        <button onClick={() => setIsAuthenticated(false)}>Logout</button>
+        <button onClick={logout}>Logout</button>
       </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/login" element={<Login />} />
         <Route
           path="/profile/*"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
           }
